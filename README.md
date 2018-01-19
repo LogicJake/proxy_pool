@@ -1,6 +1,12 @@
 # Proxy_IP
+<<<<<<< HEAD
 
 ## todo
+=======
+![pyversions](https://img.shields.io/badge/python%20-3.5%2B-blue.svg)
+![Travis](https://img.shields.io/travis/rust-lang/rust.svg)
+### todo
+>>>>>>> 4fe280a22169e71a0501c72c8ea6a281d7185633
 * [ ] 多线程验证代理
 * [ ] 定时检测ip池，剔除无用ip
 * [ ] 多种存储方式（数据库，redis，txt文本）
