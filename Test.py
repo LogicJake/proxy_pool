@@ -3,8 +3,8 @@ import telnetlib
 def TestIP(ip,port):
     # 连接Telnet服务器
     try:
-        tn = telnetlib.Telnet(ip, port=port, timeout=20)
+        tn = telnetlib.Telnet(ip, port=port, timeout=5)
     except:
-        print('失败')
+        return 0
     else:
-        print('成功')
+        return 1
