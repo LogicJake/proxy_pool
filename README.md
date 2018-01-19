@@ -1,5 +1,6 @@
 # Proxy_IP
-
+![pyversions](https://img.shields.io/badge/python%20-3.5%2B-blue.svg)
+![Travis](https://img.shields.io/travis/rust-lang/rust.svg)
 ### todo
 * [ ] 多线程验证代理
 * [ ] 定时检测ip池，剔除无用ip
