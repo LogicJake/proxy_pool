@@ -29,7 +29,7 @@ def GetIP(check,save):
             port = tdlist[2].string
             # if tdlist[3].find('a'):
             #     addr = tdlist[3].find('a').string  # addr
-            if check:
+            if check == 1:
                 res = TestIP(ip,port)       #检测有效性
             else:                           #不检测，默认有效
                 res = 1
