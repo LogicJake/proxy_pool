@@ -7,7 +7,7 @@ if __name__ =="__main__":
     except ImportError:
         print('请在项目根目录中运行脚本')
         exit(-1)
-    config = config.open_accordant_config()
+    config = config.open_accordant_config("config.json")
     check = config['check']
     save = config['storage_mode']
     GetIP(check=check,save=save)

@@ -3,7 +3,7 @@ import http.cookiejar
 import urllib
 from urllib.error import URLError
 from bs4 import BeautifulSoup
-from Test import TestIP
+from Test import *
 from save import saveIp
 
 def GetIP(check,save):
@@ -16,7 +16,7 @@ def GetIP(check,save):
                'Cache-Control': 'max - age = 0',
                }
     get_url = "http://www.xicidaili.com/nt/"
-    validIp = []
+    validIp = []                    #未经检测的ip地址
     try:
         get_request  = urllib.request.Request(get_url, headers=headers)
         get_response = opener.open(get_request)
@@ -27,19 +27,14 @@ def GetIP(check,save):
             tdlist=tr.findAll('td')     #获取td
             ip = tdlist[1].string
             port = tdlist[2].string
-            # if tdlist[3].find('a'):
-            #     addr = tdlist[3].find('a').string  # addr
-            if check == 1:
-                res = TestIP(ip,port)       #检测有效性
-            else:                           #不检测，默认有效
-                res = 1
-            if (res == 1):
-                dic = {}
-                dic['ip'] = ip
-                dic['port'] = port
-                validIp.append(dic)
+            dic = {}
+            dic['ip'] = ip
+            dic['port'] = port
+            validIp.append(dic)
     except URLError as e:
         print(e)
+    if check == 1:
+        validIp = StartTest(validIp)      #多线程检测是否有效，返回有效代理列表
     saveIp(save,validIp)
 
 # def Visit():
