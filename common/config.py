@@ -12,8 +12,8 @@ def open_accordant_config(config_name):
     config_file = sys.path[0]+os.path.sep+config_name
     if os.path.exists(config_file):
         with open(config_file, 'r') as f:
-            print("Load config file from {}".format(config_file))
+            print("[INFO] Load config file from {}".format(config_file))
             return json.load(f)
     else:
-        print("缺少配置文件")
+        print("[ERROR] Fail to load config file from {}".format(config_file))
 

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import pymysql
-def saveIp(choice,validIp):
+import time
+def saveIp(choice,validIp,init):
     if choice == 1:
         saveToTxT(validIp)
     elif choice == 2:
-        saveToMysql(validIp)
+        return saveToMysql(validIp,init)
 
 def saveToTxT(validIp):
     f = open('ip.txt', 'w', encoding="utf-8")
@@ -16,26 +17,31 @@ def saveToTxT(validIp):
         f.write('\n')
     f.close()
 
-def saveToMysql(validIp):
+def saveToMysql(validIp,init):
     try:
         from common import config
-    except ImportError:
-        exit(-1)
+    except ImportError as e:
+        print(e)
     config = config.open_accordant_config("db.json")        #加载数据库连接信息
     try:
         conn = pymysql.connect(host=config['host'], user=config['user'], passwd=config['password'], db=config['dbname'], port=config['port'],charset='utf8')
         cursor = conn.cursor()
-        cursor.execute("DROP TABLE IF EXISTS pool")
-        sql = """CREATE TABLE pool (
-                 ID INT(11) primary key auto_increment,
+        if init:                #初始化
+            cursor.execute("DROP TABLE IF EXISTS origin")
+            cursor.execute("DROP TABLE IF EXISTS available")
+        sql = """CREATE TABLE origin (
                  IP  CHAR(20) NOT NULL,
                  PORT  INT(20) NOT NULL,
-                 UPDATE_TIME DATETIME NOT NULL)"""
+                 UPDATE_TIME int(11) NOT NULL)"""
         cursor.execute(sql)
         for ip in validIp:
-            sql = "INSERT INTO pool(IP, PORT, UPDATE_TIME) VALUES (\'"+ip['ip']+'\','+ip['port']+',NOW())'
+            sql = "INSERT INTO origin(IP, PORT, UPDATE_TIME) VALUES (\'"+ip['ip']+'\','+ip['port']+',unix_timestamp()'+')'
             cursor.execute(sql)
         cursor.close()
         conn.close()
-    except Exception:
-        print("保存到MySQL失败")
+        print("[INFO] The proxy pool is initialized successfully")
+        return True
+    except Exception as e:
+        print(e)
+        print("[ERROR] Failed to initialize proxy data")
+        return False
