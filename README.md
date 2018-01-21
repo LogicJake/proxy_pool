@@ -14,8 +14,7 @@
 
 
 ## 快速开始
-clone仓库，修改配置文件config.json，运行start.py。
-文件。
+clone仓库，修改配置文件config.json，运行start.py文件。
 
 ## config.json参数说明
 * host：数据库地址，加入在本地，直接填写"localhost"；在远程服务器填写服务器ip地址。
