@@ -67,7 +67,7 @@ def start_check():      #默认一次取10条
     cursor.close()
     conn.close()        #关闭数据库连接
 
-def cycle_check(interval = 30):
+def cycle_check(interval = 20):
     print("[INFO] Open the thread to check ip from table 'available' every {} minutes".format(interval))
     while True:
         time.sleep(interval*60)   #休眠interval*60s
