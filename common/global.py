@@ -16,7 +16,6 @@ def __init__():#初始化
     _global_dict['dbname'] = config['dbname']
     _global_dict['port'] = config['port']
 
-
 def set_value(key,value):
     """ 定义一个全局变量 """
     _global_dict[key] = value

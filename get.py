@@ -43,11 +43,14 @@ def save_to_mysql(validIp,init):
         if init:                #初始化
             cursor.execute("DROP TABLE IF EXISTS origin")
             cursor.execute("DROP TABLE IF EXISTS available")
-        sql = """CREATE TABLE origin (
+            sql = """CREATE TABLE origin (
+                 ID INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
                  IP  CHAR(20) NOT NULL,
                  PORT  INT(20) NOT NULL,
                  UPDATE_TIME int(11) NOT NULL)"""
-        cursor.execute(sql)
+            cursor.execute(sql)
+            sql = "CREATE TABLE available (IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED FLOAT NOT NULL,UNIQUE (IP) )"
+            cursor.execute(sql)
         for ip in validIp:
             sql = "INSERT INTO origin(IP, PORT, UPDATE_TIME) VALUES (\'"+ip['ip']+'\','+ip['port']+',unix_timestamp()'+')'
             cursor.execute(sql)

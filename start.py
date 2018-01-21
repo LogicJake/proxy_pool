@@ -7,4 +7,4 @@ if __name__ =="__main__":
     Global.__init__()
     res = get_ip(init=True)
     if res:
-        start_test(10)
+        start_test()
