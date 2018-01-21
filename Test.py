@@ -5,28 +5,11 @@ import pymysql
 from common import Global
 import threading
 '''
-首先从origin表中取10条数据进行测试，并将其从origin删除
+每个线程首先从origin表中取10条数据进行测试，并将其从origin删除
 测试10条代理的可用性和连接速度并存入aviable表
 '''
 
-def start_test():      #默认一次取10条
-    conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'),
-                           passwd=Global.get_value('password'), db=Global.get_value('dbname'),
-                           port=Global.get_value('port'), charset='utf8')
-
-    threadpool = []
-    for i in range(3):
-        th = threading.Thread(target=test, args=(conn,), name='thread-' + str(i))
-        threadpool.append(th)
-        th.start()
-        print('[INFO] Start thread-'+ str(i)+' to test proxy')
-        time.sleep(1)       #保证子线程已经获取删除数据
-    for th in threadpool:
-        threading.Thread.join(th)
-    print('[INFO] '+'All threads have finshed at '+time.ctime())
-    conn.close()        #关闭数据库连接
-
-def test(conn,num=10):
+def test(conn,num=20):
     try:
         cursor = conn.cursor()
         sql = "select IP,PORT,ID from origin order by UPDATE_TIME desc limit {}".format(num)
@@ -67,13 +50,34 @@ def save(validIp,conn):
         cursor = conn.cursor()
         for ip in validIp:
             #replace into 保证不会插入重复ip，且已存在该ip时执行更新操作
-            sql = "REPLACE INTO available(IP, PORT, UPDATE_TIME,SPEED) VALUES ('" + ip['ip'] + "'," + str(ip['port']) + ",unix_timestamp(),"+str(ip['speed']) + ')'
+            sql = "REPLACE INTO available(IP, PORT, UPDATE_TIME,SPEED) VALUES ('{}',{},unix_timestamp(),{})".format(ip['ip'],str(ip['port']),str(ip['speed']))
             cursor.execute(sql)
         cursor.close()
-        return True
     except Exception as e:
         print(e)
         print("[ERROR] Failed to save effective proxy data")
-        return False
 
+def start_test():      #默认一次取10条
+    conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'),
+                           passwd=Global.get_value('password'), db=Global.get_value('dbname'),
+                           port=Global.get_value('port'), charset='utf8')
 
+    threadpool = []
+    for i in range(3):
+        th = threading.Thread(target=test, args=(conn,), name='thread-test-ip-' + str(i))
+        threadpool.append(th)
+        th.start()
+        print('[INFO] Start thread-test-ip-'+ str(i)+' to test proxy')
+        time.sleep(1)       #保证子线程已经获取删除数据
+    for th in threadpool:
+        threading.Thread.join(th)
+    print('[INFO] '+'All thread-test-ip have finshed at '+time.ctime())
+    conn.close()        #关闭数据库连接
+
+def cycle_test(interval = 10):
+    print("[INFO] Open the thread to test ip from table 'origin' every {} minutes".format(interval))
+    while True:
+        time.sleep(interval*60)   #休眠interval*60s
+        print("[INFO] Begin to test ip from table 'origin' at {}".format(time.ctime()))
+        start_test()
+        print("[INFO] thread-test-ip is sleeping")

@@ -16,56 +16,51 @@ def get_ip_from_xc():
                'Accept-Language': 'zh - CN, zh;q = 0.8',
                'Cache-Control': 'max - age = 0',
                }
-    get_url = "http://www.xicidaili.com/nt/"
     validIp = []                    #未经检测的ip地址
-    try:
-        get_request  = urllib.request.Request(get_url, headers=headers)
-        get_response = opener.open(get_request)
-        soup = BeautifulSoup(get_response, "html.parser")
-        trs = soup.findAll('tr')[1:]    #去除第一行的列名
-        for tr in trs:
-            tdlist=tr.findAll('td')     #获取td
-            ip = tdlist[1].string
-            port = tdlist[2].string
-            dic = {}
-            dic['ip'] = ip
-            dic['port'] = port
-            validIp.append(dic)
-    except URLError as e:
-        print(e)
-        print('[ERROR] Failed to get the data from xicidaili')
+    for i in range(1,3):
+        if i == 1:
+            get_url = "http://www.xicidaili.com/nt/"
+        else:
+            get_url = "http://www.xicidaili.com/nt/{}".format(i)
+        try:
+            get_request = urllib.request.Request(get_url, headers=headers)
+            get_response = opener.open(get_request)
+            soup = BeautifulSoup(get_response, "html.parser")
+            trs = soup.findAll('tr')[1:]  # 去除第一行的列名
+            for tr in trs:
+                tdlist = tr.findAll('td')  # 获取td
+                ip = tdlist[1].string
+                port = tdlist[2].string
+                dic = {}
+                dic['ip'] = ip
+                dic['port'] = port
+                validIp.append(dic)
+        except URLError as e:
+            print(e)
+            print('[ERROR] Failed to get the data from xicidaili')
     return validIp
 
-def save_to_mysql(validIp,init):
+def save_to_mysql(validIp):
     try:
         conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'), passwd=Global.get_value('password'), db=Global.get_value('dbname'), port=Global.get_value('port'),charset='utf8')
         cursor = conn.cursor()
-        if init:                #初始化
-            cursor.execute("DROP TABLE IF EXISTS origin")
-            cursor.execute("DROP TABLE IF EXISTS available")
-            sql = """CREATE TABLE origin (
-                 ID INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                 IP  CHAR(20) NOT NULL,
-                 PORT  INT(20) NOT NULL,
-                 UPDATE_TIME int(11) NOT NULL)"""
-            cursor.execute(sql)
-            sql = "CREATE TABLE available (IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED FLOAT NOT NULL,UNIQUE (IP) )"
-            cursor.execute(sql)
         for ip in validIp:
-            sql = "INSERT INTO origin(IP, PORT, UPDATE_TIME) VALUES (\'"+ip['ip']+'\','+ip['port']+',unix_timestamp()'+')'
+            sql = "INSERT INTO origin(IP, PORT, UPDATE_TIME) VALUES ('{}',{},unix_timestamp())".format(ip['ip'],ip['port'])
             cursor.execute(sql)
         cursor.close()
         conn.close()
-        print("[INFO] The proxy pool is initialized successfully")
-        return True
     except Exception as e:
         print(e)
-        if init:
-            print("[ERROR] Failed to initialize proxy data")
-        else:
-            print("[ERROR] Failed to save proxy data")
-        return False
+        print("[ERROR] Failed to save proxy data")
 
-def get_ip(init):         #todo：添加多种获取途径
+def get_ip():         #todo：添加多种获取途径
     validIp = get_ip_from_xc()
-    return save_to_mysql(validIp,init)
+    return save_to_mysql(validIp)
+
+def cycle_get(interval = 20):
+    print("[INFO] Open the thread to get ip from the network every {} minutes".format(interval))
+    while True:
+        time.sleep(interval*60)   #休眠interval*60s
+        print("[INFO] Begin to get ip from the network at {}".format(time.ctime()))
+        get_ip()
+        print("[INFO] thread-get-ip is sleeping")

@@ -9,7 +9,6 @@ def __init__():#初始化
     global _global_dict
     _global_dict = {}
     config = config.open_accordant_config("config.json")
-    _global_dict['storage_mode'] = config['storage_mode']
     _global_dict['host'] = config['host']
     _global_dict['user'] = config['user']
     _global_dict['password'] = config['password']
