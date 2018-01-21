@@ -1,3 +1,8 @@
 {
-    "storage_mode": 2
+    "storage_mode": 2,
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "dbname": "ip",
+    "port": 3306
 }

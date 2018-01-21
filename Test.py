@@ -2,19 +2,15 @@
 import time
 import requests
 import pymysql
+from common import Global
 '''
 首先从origin表中取10条数据进行测试，并将其从origin删除
 测试10条代理的可用性和连接速度并存入aviable表
 '''
 
-def StartTest(num=10):      #默认一次取10条
+def start_test(num=10):      #默认一次取10条
     try:
-        from common import config
-    except ImportError as e:
-        print(e)
-    config = config.open_accordant_config("db.json")        #加载数据库连接信息
-    try:
-        conn = pymysql.connect(host=config['host'], user=config['user'], passwd=config['password'], db=config['dbname'], port=config['port'],charset='utf8')
+        conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'), passwd=Global.get_value('password'), db=Global.get_value('dbname'), port=Global.get_value('port'),charset='utf8')
         cursor = conn.cursor()
         sql = "select IP,PORT from origin order by UPDATE_TIME desc limit {}".format(num)
         cursor.execute(sql)
@@ -36,7 +32,7 @@ def StartTest(num=10):      #默认一次取10条
     except Exception as e:
         print(e)
 
-def TestIp(ip,port):
+def test_ip(ip,port):
     proxies = {'http': str(ip)+":"+str(port)}
     start = time.time()
     try:
@@ -49,12 +45,7 @@ def TestIp(ip,port):
 
 def save(validIp):
     try:
-        from common import config
-    except ImportError as e:
-        print(e)
-    config = config.open_accordant_config("db.json")        #加载数据库连接信息
-    try:
-        conn = pymysql.connect(host=config['host'], user=config['user'], passwd=config['password'], db=config['dbname'], port=config['port'],charset='utf8')
+        conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'), passwd=Global.get_value('password'), db=Global.get_value('dbname'), port=Global.get_value('port'),charset='utf8')
         cursor = conn.cursor()
         sql="CREATE TABLE IF NOT EXISTS available (IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED CHAR(20) NOT NULL) "
         cursor.execute(sql)
