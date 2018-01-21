@@ -3,8 +3,8 @@
 ![pyversions](https://img.shields.io/badge/python%20-3.5%2B-blue.svg)
 ![Travis](https://img.shields.io/travis/rust-lang/rust.svg)
 ## todo
-* [ ] 每隔一段时间爬取免费代理保存到数据库（建立一个origin表）
-* [ ] 检测origin表的代理有效性，将有效的代理和其访问时间存到available表
+* [x] 每隔一段时间爬取免费代理保存到数据库（建立一个origin表）
+* [x] 检测origin表的代理有效性，将有效的代理和其访问时间存到available表
 * [ ] 每隔一段时间检测aviable表，从available表取长时间未被检测的一部分数据检查，剔除无效代理
 * [ ] 配置squid供使用
 
@@ -40,4 +40,7 @@ clone仓库，根据需要修改配置文件config.json，运行start.py。如�
 
 * 2018.1.20  
 支持存储到mysql数据库
+
+* 2018.1.21
+完成检测origin表内数据
 
