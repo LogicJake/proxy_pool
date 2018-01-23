@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import pymysql
 import time
 from common import Global
+from test import *
 
 def get_ip_from_xc():
     opener = urllib.request.build_opener()
@@ -55,7 +56,8 @@ def save_to_mysql(validIp):
 
 def get_ip():         #todo：添加多种获取途径
     validIp = get_ip_from_xc()
-    return save_to_mysql(validIp)
+    save_to_mysql(validIp)
+    start_test()
 
 def cycle_get(interval = 30):
     print("[INFO] Open the thread to get ip from the network every {} minutes".format(interval))

@@ -18,11 +18,9 @@ def init():
     cursor.execute(sql)
     sql = "CREATE TABLE available (ID INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED FLOAT NOT NULL,UNIQUE (IP),STATUS int(1) NOT NULL DEFAULT 0)"
     cursor.execute(sql)
-
     print("[INFO] The database is already ")
     get_ip()
     print("[INFO] The proxy pool is initialized successfully")
-    start_test()
     sql = "SELECT COUNT(*) FROM available"
     cursor.execute(sql)
     res = cursor.fetchone()
