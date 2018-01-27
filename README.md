@@ -16,7 +16,7 @@
 clone仓库，修改配置文件config.json，运行start.py文件。
 
 ## config.json参数说明
-* host：数据库地址，加入在本地，直接填写"localhost"；在远程服务器填写服务器ip地址。
+* host：数据库地址，假如在本地，直接填写"localhost"；在远程服务器填写服务器ip地址。
 * port：端口地址，默认为3306，一般不需要更改
 * user：用户名
 * password：密码
