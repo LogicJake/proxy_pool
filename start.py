@@ -10,7 +10,7 @@ def init():
     Global.__init__()
     conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'),
                            passwd=Global.get_value('password'), db=Global.get_value('dbname'),
-                           port=Global.get_value('port'), charset='utf8')
+                           port=Global.get_value('port'), charset='utf8',autocommit = True)
     cursor = conn.cursor()
     cursor.execute("DROP TABLE IF EXISTS origin")
     cursor.execute("DROP TABLE IF EXISTS available")

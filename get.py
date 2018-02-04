@@ -71,7 +71,7 @@ def get_ip_from_kdl():
 
 def save_to_mysql(validIp):
     try:
-        conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'), passwd=Global.get_value('password'), db=Global.get_value('dbname'), port=Global.get_value('port'),charset='utf8')
+        conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'), passwd=Global.get_value('password'), db=Global.get_value('dbname'), port=Global.get_value('port'),charset='utf8',autocommit = True)
         cursor = conn.cursor()
         for ip in validIp:
             sql = "INSERT INTO origin(IP, PORT, UPDATE_TIME) VALUES ('{}',{},unix_timestamp())".format(ip['ip'],ip['port'])

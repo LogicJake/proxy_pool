@@ -47,7 +47,7 @@ def test_ip(ip,port):
 def start_check():      #默认一次取10条
     conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'),
                            passwd=Global.get_value('password'), db=Global.get_value('dbname'),
-                           port=Global.get_value('port'), charset='utf8')
+                           port=Global.get_value('port'), charset='utf8',autocommit = True)
 
     threadpool = []
     for i in range(3):

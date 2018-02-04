@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-def __init__():#初始化
+def __init__(): #初始化
     try:
         from common import config
     except ImportError:
