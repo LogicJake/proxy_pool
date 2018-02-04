@@ -74,7 +74,7 @@ def save(validIp,conn):
 def start_test():
     conn = pymysql.connect(host=Global.get_value('host'), user=Global.get_value('user'),
                            passwd=Global.get_value('password'), db=Global.get_value('dbname'),
-                           port=Global.get_value('port'), charset='utf8')
+                           port=Global.get_value('port'), charset='utf8',autocommit = True)
 
     threadpool = []
     for i in range(5):
