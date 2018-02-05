@@ -8,26 +8,34 @@ import re
 '''
 检查available表中有没有代理失效，优先检查时间久的
 '''
-
+lock = threading.Lock()
 def check(conn,num=10):
     try:
         cursor = conn.cursor()
         sql = "select IP,PORT,ID from available WHERE STATUS=0 order by UPDATE_TIME limit {} ".format(num)   #获取num条数据
+        lock.acquire()
         cursor.execute(sql)
+        lock.release()
         results = cursor.fetchall()
         for proxy in results:
             sql = "update available SET STATUS=1 WHERE ID={}".format(proxy[2])  # 状态设置为1，表示正在被检查
+            lock.acquire()
             cursor.execute(sql)
+            lock.release()
         num = 0
         for proxy in results:
             res = test_ip(proxy[0],proxy[1])
             if res == False:
                 num = num+1
                 sql = "delete from available where ID={}".format(proxy[2])  # 删除失效代理
+                lock.acquire()
                 cursor.execute(sql)
+                lock.release()
             else:            #更新数据
                 sql = "update available SET UPDATE_TIME=unix_timestamp(), SPEED={}, STATUS=0 WHERE ID={}".format(res,proxy[2])
+                lock.acquire()
                 cursor.execute(sql)
+                lock.release()
         thread = threading.current_thread()
         print('[INFO] '+thread.getName()+' has finished his work. Successfully delete {} invalid proxy'.format(num))
         cursor.close()

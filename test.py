@@ -9,7 +9,7 @@ import re
 每个线程首先从origin表中取20条数据进行测试，并将其从origin删除
 测试20条代理的可用性和连接速度并存入aviable表
 '''
-
+lock = threading.Lock()
 def test(conn,num=10):
     start_time = time.time()
     interval = 30  # 爬取间隔 尽可能在此间隔内完成任务
@@ -20,16 +20,22 @@ def test(conn,num=10):
         try:
             cursor = conn.cursor()
             sql = "SELECT COUNT(*) FROM origin"
+            lock.acquire()
             cursor.execute(sql)
+            lock.release()
             res = cursor.fetchone()  # 抓取待测试代理数
             if res[0] == 0:                                        #空退出
                 break
             sql = "select IP,PORT,ID from origin order by UPDATE_TIME desc limit {}".format(num)
+            lock.acquire()
             cursor.execute(sql)
+            lock.release()
             results = cursor.fetchall()
             for proxy in results:
                 sql = "delete from origin where ID={}".format(proxy[2])  # 删除之前获取的记录
+                lock.acquire()
                 cursor.execute(sql)
+                lock.release()
             validIp = []  # 成功的代理\
             start_test_time = time.time()
             for proxy in results:
@@ -69,7 +75,9 @@ def save(validIp,conn):
         for ip in validIp:
             #replace into 保证不会插入重复ip，且已存在该ip时执行更新操作
             sql = "REPLACE INTO available(IP, PORT, UPDATE_TIME,SPEED) VALUES ('{}',{},unix_timestamp(),{})".format(ip['ip'],str(ip['port']),str(ip['speed']))
+            lock.acquire()
             cursor.execute(sql)
+            lock.release()
         cursor.close()
     except Exception as e:
         print(e)
