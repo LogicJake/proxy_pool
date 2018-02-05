@@ -4,6 +4,7 @@ import requests
 import pymysql
 from common import Global
 import threading
+import re
 '''
 每个线程首先从origin表中取20条数据进行测试，并将其从origin删除
 测试20条代理的可用性和连接速度并存入aviable表
@@ -48,13 +49,17 @@ def test(conn,num=10):
             print(e)
 
 def test_ip(ip,port):
-    proxies = {'http': str(ip)+":"+str(port)}
+    proxies = {'https': str(ip)+":"+str(port)}
     start = time.time()
     try:
-        requests.get('http://www.baidu.com',timeout=10,proxies=proxies)  #超过10s的代理抛弃
+        response = requests.get('https://www.bilibili.com/12',timeout=10,proxies=proxies)  #超过10s的代理抛弃
         cost = time.time() - start
         cost = round(cost,2)        #保留两位小数
-        return cost
+        result = re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", response.text)
+        if result[0] != "36.149.38.34":
+            return cost
+        else:
+            return False
     except Exception as e:
         return False
 
