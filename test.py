@@ -56,7 +56,7 @@ def test_ip(ip,port):
         cost = time.time() - start
         cost = round(cost,2)        #保留两位小数
         result = re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", response.text)
-        if result[0] != "36.149.38.34":
+        if result[0] != Global.get_value('local_ip'):
             return cost
         else:
             return False

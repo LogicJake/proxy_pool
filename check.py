@@ -4,6 +4,7 @@ import requests
 import pymysql
 from common import Global
 import threading
+import re
 '''
 检查available表中有没有代理失效，优先检查时间久的
 '''
@@ -41,8 +42,7 @@ def test_ip(ip,port):
         cost = time.time() - start
         cost = round(cost,2)        #保留两位小数
         result = re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", response.text)
-        print(result)
-        if result[0] != "36.149.166.34":            #查看是否为本机ip
+        if result[0] != Global.get_value('local_ip'):
             return cost
         else:
             return False

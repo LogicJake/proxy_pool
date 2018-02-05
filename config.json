@@ -3,5 +3,6 @@
     "user": "root",
     "password": "",
     "dbname": "ip",
-    "port": 3306
+    "port": 3306,
+    "local_ip":"36.149.38.34"
 }
