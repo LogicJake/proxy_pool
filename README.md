@@ -9,7 +9,7 @@
 * [x] 爬取更多代理源
 
 ## 功能介绍
-从[西刺免费代理IP](http://www.xicidaili.com/)、快代理和ip181爬取国内免费代理，验证有效性后建立ip池。目前只支持保存到MySQL数据库中。每隔一段时间验证代理池中代理有效性和连接时间。
+从[西刺免费代理IP](http://www.xicidaili.com/)、快代理和ip181爬取国内免费代理，验证有效性后建立ip池。目前只支持保存到MySQL数据库中。每隔一段时间验证代理池中代理有效性和连接时间。获取代理见项目[get_proxy](https://github.com/LogicJake/get_proxy)
 
 
 ## 快速开始
