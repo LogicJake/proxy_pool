@@ -55,10 +55,10 @@ def test(conn,num=10):
             print(e)
 
 def test_ip(ip,port):
-    proxies = {'https': str(ip)+":"+str(port)}
+    proxies = {'http': str(ip)+":"+str(port)}
     start = time.time()
     try:
-        response = requests.get('https://www.bilibili.com/12',timeout=10,proxies=proxies)  #超过10s的代理抛弃
+        response = requests.get('http://space.bilibili.com/ajax/member/GetInfo',timeout=10,proxies=proxies)  #超过10s的代理抛弃
         cost = time.time() - start
         cost = round(cost,2)        #保留两位小数
         result = re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", response.text)
