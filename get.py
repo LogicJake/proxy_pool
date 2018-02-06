@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import http.cookiejar
-import urllib
-from urllib.error import URLError
+import requests
 from bs4 import BeautifulSoup
 import pymysql
 import time
@@ -9,7 +8,6 @@ from common import Global
 from test import *
 
 def get_ip_from_xc():
-    opener = urllib.request.build_opener()
     user_agent = r'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36'
     headers = {'User-Agent': user_agent,
                'Connection': 'keep-alive',
@@ -23,9 +21,8 @@ def get_ip_from_xc():
         for i in range(1, 3):
             get_url = url+str(i)
             try:
-                get_request = urllib.request.Request(get_url, headers=headers)
-                get_response = opener.open(get_request)
-                soup = BeautifulSoup(get_response, "html.parser")
+                get_response = requests.get(get_url, headers=headers, timeout=10)
+                soup = BeautifulSoup(get_response.text, "html.parser")
                 trs = soup.findAll('tr')[1:]  # 去除第一行的列名
                 for tr in trs:
                     tdlist = tr.findAll('td')  # 获取td
@@ -35,13 +32,12 @@ def get_ip_from_xc():
                     dic['ip'] = ip
                     dic['port'] = port
                     validIp.append(dic)
-            except URLError as e:
+            except Exception as e:
                 print(e)
                 print('[ERROR] Failed to get the data from xicidaili')
     return validIp
 
 def get_ip_from_kdl():
-    opener = urllib.request.build_opener()
     user_agent = r'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36'
     headers = {'User-Agent': user_agent,
                'Connection': 'keep-alive',
@@ -53,9 +49,8 @@ def get_ip_from_kdl():
     for i in range(1, 3):
         get_url = "https://www.kuaidaili.com/free/inha/".format(i)
         try:
-            get_request = urllib.request.Request(get_url, headers=headers)
-            get_response = opener.open(get_request)
-            soup = BeautifulSoup(get_response, "html.parser")
+            get_response = requests.get(get_url, headers=headers, timeout=10)
+            soup = BeautifulSoup(get_response.text, "html.parser")
             trs = soup.findAll('tr')[1:]  # 去除第一行的列名
             for tr in trs:
                 tdlist = tr.findAll('td')  # 获取td
@@ -65,14 +60,13 @@ def get_ip_from_kdl():
                 dic['ip'] = ip
                 dic['port'] = port
                 validIp.append(dic)
-        except URLError as e:
+        except Exception as e:
             print(e)
             print('[ERROR] Failed to get the data from kuaidaili')
         time.sleep(1)  # 延时反爬
     return validIp
 
 def get_ip_from_ip181():
-    opener = urllib.request.build_opener()
     user_agent = r'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36'
     headers = {'User-Agent': user_agent,
                'Connection': 'keep-alive',
@@ -83,9 +77,8 @@ def get_ip_from_ip181():
     validIp = []  # 未经检测的ip地址
     get_url = "http://www.ip181.com"
     try:
-        get_request = urllib.request.Request(get_url, headers=headers)
-        get_response = opener.open(get_request)
-        soup = BeautifulSoup(get_response, "html.parser")
+        get_response = requests.get(get_url, headers=headers, timeout=10)
+        soup = BeautifulSoup(get_response.text, "html.parser")
         trs = soup.findAll('tr')[1:]  # 去除第一行的列名
         for tr in trs:
             tdlist = tr.findAll('td')  # 获取td
@@ -95,7 +88,7 @@ def get_ip_from_ip181():
             dic['ip'] = ip
             dic['port'] = port
             validIp.append(dic)
-    except URLError as e:
+    except Exception as e:
         print(e)
         print('[ERROR] Failed to get the data from ip181')
     time.sleep(1)  # 延时反爬
