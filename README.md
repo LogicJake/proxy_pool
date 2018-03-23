@@ -21,7 +21,7 @@ clone仓库，修改配置文件config.json，运行start.py文件。
 * user：用户名
 * password：密码
 * dbname：存储的数据库名称，需要事先创建好
-* local_ip：本机外网ip，以测试ip是否真的有效
+* local_ip：本机外网ip，以测试代理是否有效
 
 ## 日志
 2018.2.5
