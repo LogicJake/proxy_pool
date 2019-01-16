@@ -1,0 +1,7 @@
+{
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "dbname": "proxy",
+    "port": 3306
+}
