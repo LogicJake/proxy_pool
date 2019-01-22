@@ -1,10 +1,8 @@
-# Proxy_IP
-
 ![pyversions](https://img.shields.io/badge/python%20-3.5%2B-blue.svg)
 ![Travis](https://img.shields.io/travis/rust-lang/rust.svg)
-
+[English](https://github.com/LogicJake/proxy_pool/blob/master/README-EN.md)
 ## 功能介绍
-从西刺免费代理和快代理爬取国内免费代理，验证有效性后建立ip池。目前只支持保存到MySQL数据库中。每隔一段时间验证代理池中代理有效性和连接时间。
+从西刺免费代理和快代理爬取国内免费代理，验证有效性后建立代理池。目前只支持保存到MySQL数据库中。每隔一段时间验证代理池中代理有效性和连接时间。
 
 
 ## 快速开始
@@ -23,7 +21,7 @@
 * 新代理源  
 假如想添加新的免费代理源，直接在lib/proxy编写新的爬取类，并继承BasicSource。然后在lib/proxy/all_source.py引入。
 * 新数据库存储方式  
-假如想添加新的数据库存储方式，直接在lib/database编写新的存储方式类，并继承database类。然后在lib/database/db_object仿造mysql返回一个实例。
+假如想添加新的数据库存储方式，直接在lib/database编写新的存储方式类，并继承database类。然后在lib/database/db_object.py仿造mysql返回一个实例。
 
 
 ## 日志
