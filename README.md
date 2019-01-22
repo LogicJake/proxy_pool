@@ -1,5 +1,5 @@
 ![pyversions](https://img.shields.io/badge/python%20-3.5%2B-blue.svg)
-![Travis](https://img.shields.io/travis/rust-lang/rust.svg)
+![Travis](https://img.shields.io/travis/rust-lang/rust.svg)  
 [English](https://github.com/LogicJake/proxy_pool/blob/master/README-EN.md)
 ## 功能介绍
 从西刺免费代理和快代理爬取国内免费代理，验证有效性后建立代理池。目前只支持保存到MySQL数据库中。每隔一段时间验证代理池中代理有效性和连接时间。
