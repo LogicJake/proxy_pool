@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author: LogicJake
 # @Date:   2019-01-16 16:18:05
-# @Last Modified time: 2019-01-16 20:31:21
+# @Last Modified time: 2019-01-22 19:03:44
 from lib.database import db_object
 from lib.proxy import all_source
 from config import logger
@@ -20,6 +20,8 @@ class GetProxy():
             for proxy in proxies:
                 proxy['UPDATE_TIME'] = 'unix_timestamp()'
                 self.db.insert('origin', proxy)
+            logger.info('Successfully get {}  proxies'.
+                        format(len(proxies)))
         except Exception as e:
             logger.error(str(e))
             logger.error('Failed to save proxy data')
@@ -35,11 +37,15 @@ class GetProxy():
         self.save(proxies)
 
     def cycle_get(self):
-        interval = 10
-        logger.info('Start thread to get proxy from network every {} minutes'.format(
-            interval))
+        interval = 1
+        logger.info('Start thread to get proxy from network')
         while True:
-            logger.info('Begin to get proxy from network')
-            self.more_proxy()
-            logger.info("thread-get-proxy is sleeping")
+            self.db.connect()
+            num = self.db.select('origin', ['COUNT(*)'])
+            num = num[0][0]
+            self.db.close()
+            if num < 100:
+                logger.info('Begin to get proxy from network')
+                self.more_proxy()
+                logger.info("thread-get-proxy is sleeping")
             time.sleep(interval * 60)

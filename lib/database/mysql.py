@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author: LogicJake
 # @Date:   2019-01-16 13:24:52
-# @Last Modified time: 2019-01-16 20:32:28
+# @Last Modified time: 2019-01-22 19:16:04
 from .database import DataBase
 import pymysql
 from config import db_conf, logger
@@ -27,6 +27,21 @@ class MySqlDB(DataBase):
     def close(self):
         self.cursor.close()
         self.conn.close()
+
+    def update(self, table_name, key_values, where):
+        origin_sql = 'UPDATE {} SET {} WHERE {}'
+
+        if type(key_values) != dict:
+            logger.error('type of key_values must be dict')
+            exit(-1)
+        else:
+            pairs = []
+            for key, value in key_values.items():
+                pairs.append('{}={}'.format(key, value))
+
+            pairs = ','.join(pairs)
+            sql = origin_sql.format(table_name, pairs, where)
+            self.cursor.execute(sql)
 
     def insert(self, table_name, key_values):
         origin_sql = 'INSERT INTO {}({}) VALUES ({})'
@@ -69,11 +84,11 @@ class MySqlDB(DataBase):
 
         sql = origin_sql.format(column_name, table_name)
 
-        if order_by is not None:
-            sql = '{} order by {} {}'.format(sql, order_by, order)
-
         if where is not None:
             sql = '{} WHERE {}'.format(sql, where)
+
+        if order_by is not None:
+            sql = '{} order by {} {}'.format(sql, order_by, order)
 
         if limit is not None:
             if type(limit) != int:
@@ -100,6 +115,6 @@ class MySqlDB(DataBase):
             logger.info('Create table "origin"')
 
         if not self.is_table_exist('available'):
-            sql = "CREATE TABLE available (ID INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED FLOAT NOT NULL,UNIQUE (IP),STATUS int(1) NOT NULL DEFAULT 0)"
+            sql = "CREATE TABLE available (ID INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,IP  CHAR(20) NOT NULL,PORT  INT(20) NOT NULL,UPDATE_TIME int(11) NOT NULL,SPEED FLOAT NOT NULL,UNIQUE (IP))"
             self.cursor.execute(sql)
             logger.info('Create table "available"')

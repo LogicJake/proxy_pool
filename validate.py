@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author: LogicJake
 # @Date:   2019-01-16 18:27:52
-# @Last Modified time: 2019-01-16 21:05:39
+# @Last Modified time: 2019-01-22 19:15:54
 from lib.database import db_object
 from config import logger
 import time
@@ -52,7 +52,7 @@ class ValidateOrigin():
                     ' Successfully get {} validate proxies'.
                     format(valid_proxy.__len__()))
 
-    def test_thread(self):
+    def validate_thread(self):
         num = 10
         while True:
             try:
@@ -79,52 +79,40 @@ class ValidateOrigin():
             except Exception as e:
                 logger.error(str(e))
 
-    def start_test(self):
+    def start_validate(self):
         self.db.connect()
-        num = self.db.select('origin', ['COUNT(*)'])
-        num = num[0][0]
-        if num == 0:
-            logger.info('No data in origin')
-        else:
-            self.proxies = self.db.select(
-                'origin', ['IP', 'PORT', 'ID'], order_by='UPDATE_TIME')
-            for proxy in self.proxies:
-                self.db.delete('origin', 'ID={}'.format(proxy[2]))
-            self.db.close()
+        self.proxies = self.db.select(
+            'origin', ['IP', 'PORT', 'ID'], order_by='UPDATE_TIME', limit=50)
+        for proxy in self.proxies:
+            self.db.delete('origin', 'ID={}'.format(proxy[2]))
+        self.db.close()
 
-            threadpool = []
-
-            for i in range(5):
-                th = threading.Thread(
-                    target=self.test_thread, name='thread-test-ip-' + str(i))
-                threadpool.append(th)
-                logger.info('Start thread-test-proxy-' +
-                            str(i) + ' to test proxy')
-                th.start()
-            for th in threadpool:
-                threading.Thread.join(th)
-            logger.info('All thread-test-proxy have finshed')
+        threadpool = []
+        for i in range(5):
+            th = threading.Thread(
+                target=self.validate_thread, name='thread-validate-proxy-' + str(i))
+            threadpool.append(th)
+            th.start()
+        for th in threadpool:
+            threading.Thread.join(th)
+        logger.info('All thread-validate-proxy have finshed')
 
     def cycle_validate(self):
-        interval = 10
+        interval = 0.1
         logger.info(
-            "Start thread to test proxy from table 'origin' every {} minutes".format(interval))
+            "Start thread to validate proxy from table 'origin'")
         while True:
-            time.sleep(interval * 60)
             self.db.connect()
             num = self.db.select('origin', ['COUNT(*)'])
             num = num[0][0]
             self.db.close()
-            if num == 0:
-                logger.info(
-                    "The 'origin' table is empty. thread-test-proxy continues sleeping")
-            else:
-                logger.info("Begin to test proxy from table 'origin'")
-                self.start_test()
-            logger.info("thread-test-proxy is sleeping")
+            if num != 0:
+                logger.info("Begin to validate proxy from table 'origin'")
+                self.start_validate()
+                logger.info("thread-validate-proxy is sleeping")
+            time.sleep(interval * 60)
 
 
 if __name__ == '__main__':
     validate_origin = ValidateOrigin('mysql')
-    ip = validate_origin.get_ip()
-    print(ip)
+    validate_origin.cycle_validate()
